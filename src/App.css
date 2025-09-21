@@ -1,0 +1,85 @@
+/* Custom styles for mobile-first design */
+
+/* Ensure the app takes at least full height but can expand */
+html, body {
+  min-height: 100vh;
+  height: auto;
+}
+
+#root {
+  min-height: 100vh;
+  height: auto;
+}
+
+/* Ensure content is always centered with proper padding */
+.container-fluid {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Force full width for all containers and override any Bootstrap constraints */
+.navbar, main, footer {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Ensure the root container takes full width */
+.navbar .container-fluid,
+main .container-fluid,
+footer .container-fluid {
+  width: 100% !important;
+}
+
+/* Custom styling for show summary content */
+.show-summary-content p {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.show-summary-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Mobile-first responsive adjustments */
+@media (max-width: 576px) {
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .navbar .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .display-5 {
+    font-size: 1.75rem;
+  }
+
+  .card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+}
+
+/* Improve touch targets for mobile */
+.btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Better spacing for badges on mobile */
+.badge {
+  margin-bottom: 0.25rem;
+}
+
+/* Smooth transitions */
+.card {
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+}
