@@ -42,3 +42,9 @@ Thumbs.db
 
 # Build artifacts
 *.tsbuildinfo
+
+# Terraform
+backend.hcl
+.terraform
+terraform.tfvars
+tfplan
