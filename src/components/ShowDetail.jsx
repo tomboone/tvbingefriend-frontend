@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { getApiUrl } from '../utils/api'
 
 // Helper function to format dates
 const formatDate = (dateString) => {
@@ -28,7 +29,7 @@ function ShowDetail() {
     const fetchShow = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`/api/shows/${id}`)
+        const response = await fetch(getApiUrl(`/api/shows/${id}`))
 
         if (!response.ok) {
           if (response.status === 404) {
@@ -50,7 +51,7 @@ function ShowDetail() {
       try {
         setSeasonsLoading(true)
         setSeasonsError(null)
-        const response = await fetch(`/api/seasons/${id}/seasons`)
+        const response = await fetch(getApiUrl(`/api/seasons/${id}/seasons`))
 
         if (!response.ok) {
           if (response.status === 404) {
