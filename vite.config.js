@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     server: {
+      historyApiFallback: true,
       proxy: {
         // Episode service endpoints (most specific first)
         '^/api/shows/\\d+/seasons/\\d+/episodes': {
