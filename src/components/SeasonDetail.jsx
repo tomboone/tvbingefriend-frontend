@@ -34,7 +34,7 @@ function SeasonDetail() {
       setEpisodesLoading(true)
       setEpisodesError(null)
 
-      const episodesResponse = await fetch(getApiUrl(`/api/episodes/${showId}/${season.number}/episodes`))
+      const episodesResponse = await fetch(getApiUrl(`/api/shows/${showId}/seasons/${season.number}/episodes`))
       if (!episodesResponse.ok) {
         if (episodesResponse.status === 404) {
           // No episodes found is not an error, just empty array
@@ -61,7 +61,7 @@ function SeasonDetail() {
         setError(null)
 
         // Fetch the specific season directly using efficient endpoint
-        const seasonResponse = await fetch(getApiUrl(`/api/seasons/${showId}/${seasonNumber}`))
+        const seasonResponse = await fetch(getApiUrl(`/api/shows/${showId}/seasons/${seasonNumber}`))
         if (!seasonResponse.ok) {
           if (seasonResponse.status === 404) {
             throw new Error('Season not found')
@@ -79,7 +79,7 @@ function SeasonDetail() {
         }
 
         // Fetch all seasons for navigation
-        const allSeasonsResponse = await fetch(getApiUrl(`/api/seasons/${showId}/seasons`))
+        const allSeasonsResponse = await fetch(getApiUrl(`/api/shows/${showId}/seasons`))
         if (allSeasonsResponse.ok) {
           const allSeasonsData = await allSeasonsResponse.json()
           setAllSeasons(allSeasonsData)

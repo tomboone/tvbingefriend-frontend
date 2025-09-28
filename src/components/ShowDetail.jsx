@@ -51,7 +51,7 @@ function ShowDetail() {
       try {
         setSeasonsLoading(true)
         setSeasonsError(null)
-        const response = await fetch(getApiUrl(`/api/seasons/${id}/seasons`))
+        const response = await fetch(getApiUrl(`/api/shows/${id}/seasons`))
 
         if (!response.ok) {
           if (response.status === 404) {
