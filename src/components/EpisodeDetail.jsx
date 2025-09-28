@@ -17,7 +17,7 @@ const EpisodeDetail = () => {
         setLoading(true);
 
         // Fetch episodes for the season to find the specific episode
-        const episodesResponse = await fetch(getApiUrl(`/api/episodes/${showId}/${seasonNumber}/episodes`));
+        const episodesResponse = await fetch(getApiUrl(`/api/shows/${showId}/seasons/${seasonNumber}/episodes`));
         if (!episodesResponse.ok) {
           throw new Error('Episodes not found');
         }
@@ -38,7 +38,7 @@ const EpisodeDetail = () => {
         }
 
         // Fetch all seasons for cross-season navigation
-        const seasonsResponse = await fetch(getApiUrl(`/api/seasons/${showId}/seasons`));
+        const seasonsResponse = await fetch(getApiUrl(`/api/shows/${showId}/seasons`));
         if (seasonsResponse.ok) {
           const seasonsData = await seasonsResponse.json();
           setAllSeasons(seasonsData);
