@@ -9,17 +9,17 @@ export const getApiUrl = (endpoint) => {
   // In production, use environment variables for absolute URLs
   if (endpoint.startsWith('/api/shows')) {
     const baseUrl = import.meta.env.VITE_SHOW_SERVICE_URL;
-    return endpoint.replace('/api/shows', baseUrl);
+    return endpoint.replace('/api/shows', `${baseUrl}/api/shows`);
   }
 
   if (endpoint.startsWith('/api/seasons')) {
     const baseUrl = import.meta.env.VITE_SEASON_SERVICE_URL;
-    return endpoint.replace('/api/seasons', baseUrl);
+    return endpoint.replace('/api/seasons', `${baseUrl}/api/seasons`);
   }
 
   if (endpoint.startsWith('/api/episodes')) {
     const baseUrl = import.meta.env.VITE_EPISODE_SERVICE_URL;
-    return endpoint.replace('/api/episodes', baseUrl);
+    return endpoint.replace('/api/episodes', `${baseUrl}/api/episodes`);
   }
 
   // Fallback to original endpoint
