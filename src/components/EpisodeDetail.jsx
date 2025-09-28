@@ -6,6 +6,7 @@ const EpisodeDetail = () => {
   const [episode, setEpisode] = useState(null);
   const [show, setShow] = useState(null);
   const [allEpisodes, setAllEpisodes] = useState([]);
+  const [allSeasons, setAllSeasons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -34,6 +35,13 @@ const EpisodeDetail = () => {
           const showData = await showResponse.json();
           setShow(showData);
         }
+
+        // Fetch all seasons for cross-season navigation
+        const seasonsResponse = await fetch(`/api/seasons/${showId}/seasons`);
+        if (seasonsResponse.ok) {
+          const seasonsData = await seasonsResponse.json();
+          setAllSeasons(seasonsData);
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -43,6 +51,51 @@ const EpisodeDetail = () => {
 
     fetchData();
   }, [episodeNumber, showId, seasonNumber]);
+
+  // Helper functions for cross-season navigation
+  const getPreviousEpisodeUrl = () => {
+    const currentEpisodeNum = episode.number;
+
+    // Check for previous episode in current season
+    const prevEpisode = allEpisodes.find(ep => ep.number === currentEpisodeNum - 1);
+    if (prevEpisode) {
+      return `/shows/${showId}/seasons/${seasonNumber}/episodes/${prevEpisode.number}`;
+    }
+
+    // If this is episode 1, check for previous season
+    if (currentEpisodeNum === 1) {
+      const currentSeasonNum = parseInt(seasonNumber);
+      const prevSeason = allSeasons.find(s => s.number === currentSeasonNum - 1);
+      if (prevSeason && prevSeason.episodeOrder) {
+        // Use episodeOrder to get the last episode number
+        return `/shows/${showId}/seasons/${prevSeason.number}/episodes/${prevSeason.episodeOrder}`;
+      }
+    }
+
+    return null;
+  };
+
+  const getNextEpisodeUrl = () => {
+    const currentEpisodeNum = episode.number;
+
+    // Check for next episode in current season
+    const nextEpisode = allEpisodes.find(ep => ep.number === currentEpisodeNum + 1);
+    if (nextEpisode) {
+      return `/shows/${showId}/seasons/${seasonNumber}/episodes/${nextEpisode.number}`;
+    }
+
+    // If this is the last episode, check for next season
+    const isLastEpisode = !allEpisodes.find(ep => ep.number === currentEpisodeNum + 1);
+    if (isLastEpisode) {
+      const currentSeasonNum = parseInt(seasonNumber);
+      const nextSeason = allSeasons.find(s => s.number === currentSeasonNum + 1);
+      if (nextSeason) {
+        return `/shows/${showId}/seasons/${nextSeason.number}/episodes/1`;
+      }
+    }
+
+    return null;
+  };
 
   if (loading) {
     return (
@@ -155,29 +208,32 @@ const EpisodeDetail = () => {
               />
 
               {/* Episode Navigation */}
-              {allEpisodes.length > 1 && (
-                <div className="mt-3 d-flex justify-content-center gap-2">
-                  {allEpisodes.find(ep => ep.number === episode.number - 1) && (
-                    <Link
-                      to={`/shows/${showId}/seasons/${seasonNumber}/episodes/${episode.number - 1}`}
-                      className="btn btn-outline-secondary btn-sm"
-                    >
-                      ← Previous Episode
-                    </Link>
-                  )}
-                  {allEpisodes.find(ep => ep.number === episode.number + 1) && (
-                    <Link
-                      to={`/shows/${showId}/seasons/${seasonNumber}/episodes/${episode.number + 1}`}
-                      className="btn btn-outline-secondary btn-sm"
-                    >
-                      Next Episode →
-                    </Link>
-                  )}
-                </div>
-              )}
+              <div className="mt-3 d-flex justify-content-center gap-2">
+                {getPreviousEpisodeUrl() && (
+                  <Link
+                    to={getPreviousEpisodeUrl()}
+                    className="btn btn-outline-secondary btn-sm"
+                  >
+                    ← Previous Episode
+                  </Link>
+                )}
+                {getNextEpisodeUrl() && (
+                  <Link
+                    to={getNextEpisodeUrl()}
+                    className="btn btn-outline-secondary btn-sm"
+                  >
+                    Next Episode →
+                  </Link>
+                )}
+              </div>
             </div>
 
-            {/* Episode Info Card */}
+          </div>
+        )}
+
+        <div className={episode.image?.medium ? "col-lg-8 col-md-7" : "col-12"}>
+          {/* Episode Info Card when image is present */}
+          {episode.image?.medium && (
             <div className="card">
               <div className="card-body">
                 {episode.rating?.average && (
@@ -221,25 +277,22 @@ const EpisodeDetail = () => {
                 )}
               </div>
             </div>
-          </div>
-        )}
-
-        <div className={episode.image?.medium ? "col-lg-8 col-md-7" : "col-12"}>
+          )}
           {/* Episode Navigation when no image */}
-          {!episode.image?.medium && allEpisodes.length > 1 && (
+          {!episode.image?.medium && (getPreviousEpisodeUrl() || getNextEpisodeUrl()) && (
             <div className="text-center mb-4">
               <div className="d-flex justify-content-center gap-2">
-                {allEpisodes.find(ep => ep.number === episode.number - 1) && (
+                {getPreviousEpisodeUrl() && (
                   <Link
-                    to={`/shows/${showId}/seasons/${seasonNumber}/episodes/${episode.number - 1}`}
+                    to={getPreviousEpisodeUrl()}
                     className="btn btn-outline-secondary btn-sm"
                   >
                     ← Previous Episode
                   </Link>
                 )}
-                {allEpisodes.find(ep => ep.number === episode.number + 1) && (
+                {getNextEpisodeUrl() && (
                   <Link
-                    to={`/shows/${showId}/seasons/${seasonNumber}/episodes/${episode.number + 1}`}
+                    to={getNextEpisodeUrl()}
                     className="btn btn-outline-secondary btn-sm"
                   >
                     Next Episode →
@@ -261,28 +314,28 @@ const EpisodeDetail = () => {
                   </div>
                 )}
                 <div className="row g-3">
-                  <div className="col-sm-6 col-md-4">
+                  <div className="col-12">
                     <p className="mb-0"><span className="text-muted">{formatDate(episode.airdate)}</span></p>
                   </div>
 
                   {episode.airtime && (
-                    <div className="col-sm-6 col-md-4">
+                    <div className="col-12">
                       <p className="mb-0"><span className="text-muted">{formatTime(episode.airtime)}</span></p>
                     </div>
                   )}
 
-                  <div className="col-sm-6 col-md-4">
+                  <div className="col-12">
                     <p className="mb-0"><strong className="me-2">⏱️</strong><span className="text-muted">{formatRuntime(episode.runtime)}</span></p>
                   </div>
 
                   {show?.network?.name && (
-                    <div className="col-sm-6 col-md-4">
+                    <div className="col-12">
                       <p className="mb-0"><strong className="me-2">📺</strong><span className="text-muted">{show.network.name}{show.network.country?.name && ` (${show.network.country.name})`}</span></p>
                     </div>
                   )}
 
                   {show?.webchannel?.name && (
-                    <div className="col-sm-6 col-md-4">
+                    <div className="col-12">
                       <p className="mb-0"><strong className="me-2">💻</strong><span className="text-muted">{show.webchannel.name}{show.webchannel.country?.name && ` (${show.webchannel.country.name})`}</span></p>
                     </div>
                   )}

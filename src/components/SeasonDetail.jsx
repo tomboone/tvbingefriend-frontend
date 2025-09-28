@@ -162,10 +162,10 @@ function SeasonDetail() {
       </div>
 
       {/* Season Image and Navigation */}
-      {season.image && season.image.medium ? (
+      {(season.image && season.image.medium) || (show && show.image && show.image.medium) ? (
         <div className="col-md-4 col-lg-3 text-center">
           <img
-            src={season.image.medium}
+            src={(season.image && season.image.medium) ? season.image.medium : show.image.medium}
             alt={`Season ${season.number}`}
             className="img-fluid rounded shadow-sm w-100"
             style={{maxWidth: '300px'}}
@@ -220,31 +220,31 @@ function SeasonDetail() {
       )}
 
       {/* Season Information */}
-      <div className={season.image && season.image.medium ? "col-md-8 col-lg-9" : "col-12"}>
+      <div className={(season.image && season.image.medium) || (show && show.image && show.image.medium) ? "col-md-8 col-lg-9" : "col-12"}>
         <div className="card">
           <div className="card-body">
             <div className="row g-3">
 
               {season.premiereDate && (
-                <div className="col-sm-6">
+                <div className="col-12">
                   <p className="mb-0"><small className="text-muted me-2">Premiered:</small><span className="fw-semibold">{formatDateNoEmoji(season.premiereDate)}</span></p>
                 </div>
               )}
 
               {season.endDate && (
-                <div className="col-sm-6">
+                <div className="col-12">
                   <p className="mb-0"><small className="text-muted me-2">Ended:</small><span className="fw-semibold">{formatDateNoEmoji(season.endDate)}</span></p>
                 </div>
               )}
 
               {season.network && season.network.name && (
-                <div className="col-sm-6">
+                <div className="col-12">
                   <p className="mb-0"><small className="text-muted me-2">📺</small><span className="fw-semibold">{season.network.name}{season.network.country?.name && ` (${season.network.country.name})`}</span></p>
                 </div>
               )}
 
               {season.webChannel && season.webChannel.name && (
-                <div className="col-sm-6">
+                <div className="col-12">
                   <p className="mb-0"><small className="text-muted me-2">💻</small><span className="fw-semibold">{season.webChannel.name}{season.webChannel.country?.name && ` (${season.webChannel.country.name})`}</span></p>
                 </div>
               )}
@@ -263,96 +263,94 @@ function SeasonDetail() {
             </div>
           </div>
         </div>
-      </div>
 
-
-
-      {/* Episodes Section */}
-      <div className="col-12">
-        <div className="card">
-          <div className="card-header">
-            <h5 className="card-title mb-0">Episodes{season.episodeOrder && ` (${season.episodeOrder})`}</h5>
-          </div>
-          <div className="card-body">
-            {episodesLoading ? (
-              <div className="text-center py-3">
-                <div className="spinner-border spinner-border-sm text-primary me-2" role="status">
-                  <span className="visually-hidden">Loading...</span>
+        {/* Episodes Section */}
+        <div className="col-12 mt-3">
+          <div className="card">
+            <div className="card-header">
+              <h5 className="card-title mb-0">Episodes{season.episodeOrder && ` (${season.episodeOrder})`}</h5>
+            </div>
+            <div className="card-body">
+              {episodesLoading ? (
+                <div className="text-center py-3">
+                  <div className="spinner-border spinner-border-sm text-primary me-2" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  Loading episodes...
                 </div>
-                Loading episodes...
-              </div>
-            ) : episodesError ? (
-              <div className="alert alert-warning mb-0">
-                <small>Unable to load episodes: {episodesError}</small>
-              </div>
-            ) : episodes.length === 0 ? (
-              <div className="text-muted">
-                <small>No episodes available</small>
-              </div>
-            ) : (
-              <div className="row g-3">
-                {episodes.map((episode) => (
-                  <div key={episode.id} className="col-12">
-                    <Link
-                      to={`/shows/${showId}/seasons/${season.number}/episodes/${episode.number}`}
-                      className="text-decoration-none"
-                    >
-                      <div className="card border-light h-100" style={{ cursor: 'pointer', transition: 'box-shadow 0.15s ease-in-out' }}>
-                        <div className="card-body p-3">
-                          <div className="row g-3">
-                            {/* Episode Image */}
-                            <div className="col-auto">
-                              {episode.image && episode.image.medium ? (
-                                <img
-                                  src={episode.image.medium}
-                                  alt={episode.name || `Episode ${episode.number}`}
-                                  className="rounded"
-                                  style={{width: '80px', height: '60px', objectFit: 'cover'}}
-                                />
-                              ) : (
-                                <div
-                                  className="bg-light rounded d-flex align-items-center justify-content-center text-muted"
-                                  style={{width: '80px', height: '60px'}}
-                                >
-                                  <small>E{episode.number}</small>
+              ) : episodesError ? (
+                <div className="alert alert-warning mb-0">
+                  <small>Unable to load episodes: {episodesError}</small>
+                </div>
+              ) : episodes.length === 0 ? (
+                <div className="text-muted">
+                  <small>No episodes available</small>
+                </div>
+              ) : (
+                <div className="row g-3">
+                  {episodes.map((episode) => (
+                    <div key={episode.id} className="col-12">
+                      <Link
+                        to={`/shows/${showId}/seasons/${season.number}/episodes/${episode.number}`}
+                        className="text-decoration-none"
+                      >
+                        <div className="card border-light h-100" style={{ cursor: 'pointer', transition: 'box-shadow 0.15s ease-in-out' }}>
+                          <div className="card-body p-3">
+                            <div className="row g-3">
+                              {/* Episode Image */}
+                              <div className="col-auto">
+                                {episode.image && episode.image.medium ? (
+                                  <img
+                                    src={episode.image.medium}
+                                    alt={episode.name || `Episode ${episode.number}`}
+                                    className="rounded"
+                                    style={{width: '80px', height: '60px', objectFit: 'cover'}}
+                                  />
+                                ) : (
+                                  <div
+                                    className="bg-light rounded d-flex align-items-center justify-content-center text-muted"
+                                    style={{width: '80px', height: '60px'}}
+                                  >
+                                    <small>E{episode.number}</small>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Episode Info */}
+                              <div className="col">
+                                <div className="flex-grow-1">
+                                  <h6 className="card-title mb-1">
+                                    <span className="badge bg-primary me-2">Episode {episode.number}</span>
+                                    {episode.name || 'Untitled Episode'}
+                                  </h6>
+
+                                  <div className="small text-muted mb-2">
+                                    {episode.airdate && (
+                                      <span className="me-3">
+                                        📅 {new Date(episode.airdate).toLocaleDateString()}
+                                      </span>
+                                    )}
+                                    {episode.runtime && (
+                                      <span className="me-3">⏱️ {episode.runtime} min</span>
+                                    )}
+                                    {episode.rating && episode.rating.average && (
+                                      <span className="badge bg-warning text-dark">
+                                        ⭐ {episode.rating.average}/10
+                                      </span>
+                                    )}
+                                  </div>
+
                                 </div>
-                              )}
-                            </div>
-
-                            {/* Episode Info */}
-                            <div className="col">
-                              <div className="flex-grow-1">
-                                <h6 className="card-title mb-1">
-                                  <span className="badge bg-primary me-2">Episode {episode.number}</span>
-                                  {episode.name || 'Untitled Episode'}
-                                </h6>
-
-                                <div className="small text-muted mb-2">
-                                  {episode.airdate && (
-                                    <span className="me-3">
-                                      📅 {new Date(episode.airdate).toLocaleDateString()}
-                                    </span>
-                                  )}
-                                  {episode.runtime && (
-                                    <span className="me-3">⏱️ {episode.runtime} min</span>
-                                  )}
-                                  {episode.rating && episode.rating.average && (
-                                    <span className="badge bg-warning text-dark">
-                                      ⭐ {episode.rating.average}/10
-                                    </span>
-                                  )}
-                                </div>
-
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            )}
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
