@@ -143,13 +143,13 @@ function ShowDetail() {
               )}
 
               {show.premiered && (
-                <div className="col-sm-6">
+                <div className="col-12">
                   <p className="mb-0"><small className="text-muted me-2">Premiered:</small><span className="fw-semibold">{formatDateNoEmoji(show.premiered)}</span></p>
                 </div>
               )}
 
               {show.ended && (
-                <div className="col-sm-6">
+                <div className="col-12">
                   <p className="mb-0"><small className="text-muted me-2">Ended:</small><span className="fw-semibold">{formatDateNoEmoji(show.ended)}</span></p>
                 </div>
               )}
@@ -165,7 +165,7 @@ function ShowDetail() {
               )}
 
               {show.status && (
-                <div className="col-sm-6">
+                <div className="col-12">
                   <p className="mb-0"><small className="text-muted me-2">Status:</small>
                     <span className={`badge ${show.status === 'Running' ? 'bg-success' : 'bg-secondary'}`}>
                       {show.status}
@@ -175,7 +175,7 @@ function ShowDetail() {
               )}
 
               {(show.network?.name || show.webchannel?.name) && (
-                <div className="col-sm-6">
+                <div className="col-12">
                   <p className="mb-0">
                     <small className="text-muted me-2">
                       {show.network?.name ? '📺' : '💻'}
@@ -191,17 +191,17 @@ function ShowDetail() {
               )}
 
               {show.runtime && (
-                <div className="col-sm-6">
+                <div className="col-12">
                   <p className="mb-0"><small className="text-muted me-2">⏱️</small><span className="fw-semibold">{show.runtime} minutes</span></p>
                 </div>
               )}
 
-              <div className="col-sm-6">
+              <div className="col-12">
                 <p className="mb-0"><small className="text-muted me-2">Type:</small><span className="fw-semibold">{show.type}</span></p>
               </div>
 
               {show.language && (
-                <div className="col-sm-6">
+                <div className="col-12">
                   <p className="mb-0"><small className="text-muted me-2">Language:</small><span className="fw-semibold">{show.language}</span></p>
                 </div>
               )}
@@ -220,105 +220,111 @@ function ShowDetail() {
             </div>
           </div>
         </div>
-      </div>
 
-
-      {/* Seasons Section */}
-      <div className="col-12">
-        <div className="card">
-          <div className="card-header">
-            <h5 className="card-title mb-0">Seasons{seasons.length > 0 && ` (${seasons.length})`}</h5>
-          </div>
-          <div className="card-body">
-            {seasonsLoading ? (
-              <div className="text-center py-3">
-                <div className="spinner-border spinner-border-sm text-primary me-2" role="status">
-                  <span className="visually-hidden">Loading...</span>
+        {/* Seasons Section */}
+        <div className="col-12 mt-3">
+          <div className="card">
+            <div className="card-header">
+              <h5 className="card-title mb-0">Seasons{seasons.length > 0 && ` (${seasons.length})`}</h5>
+            </div>
+            <div className="card-body">
+              {seasonsLoading ? (
+                <div className="text-center py-3">
+                  <div className="spinner-border spinner-border-sm text-primary me-2" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  Loading seasons...
                 </div>
-                Loading seasons...
-              </div>
-            ) : seasonsError ? (
-              <div className="alert alert-warning mb-0">
-                <small>Unable to load seasons: {seasonsError}</small>
-              </div>
-            ) : seasons.length === 0 ? (
-              <div className="text-muted">
-                <small>No seasons available</small>
-              </div>
-            ) : (
-              <div className="row g-3">
-                {seasons.map((season) => (
-                  <div key={season.id} className="col-12">
-                    <Link
-                      to={`/shows/${id}/seasons/${season.number}`}
-                      className="text-decoration-none"
-                    >
-                      <div className="card border-light h-100" style={{ cursor: 'pointer', transition: 'box-shadow 0.15s ease-in-out' }}>
-                        <div className="row g-0">
-                          {/* Season Image or Placeholder */}
-                          <div className="col-auto">
-                            {season.image && season.image.medium ? (
-                              <img
-                                src={season.image.medium}
-                                alt={`Season ${season.number}`}
-                                className="img-fluid rounded-start"
-                                style={{ width: '120px', height: '180px', objectFit: 'cover' }}
-                              />
-                            ) : (
-                              <div
-                                className="bg-light d-flex align-items-center justify-content-center rounded-start"
-                                style={{ width: '120px', height: '180px' }}
-                              >
-                                <i className="bi bi-tv text-muted" style={{ fontSize: '2rem' }}></i>
-                              </div>
-                            )}
-                          </div>
+              ) : seasonsError ? (
+                <div className="alert alert-warning mb-0">
+                  <small>Unable to load seasons: {seasonsError}</small>
+                </div>
+              ) : seasons.length === 0 ? (
+                <div className="text-muted">
+                  <small>No seasons available</small>
+                </div>
+              ) : (
+                <div className="row g-3">
+                  {seasons.map((season) => (
+                    <div key={season.id} className="col-12">
+                      <Link
+                        to={`/shows/${id}/seasons/${season.number}`}
+                        className="text-decoration-none"
+                      >
+                        <div className="card border-light h-100" style={{ cursor: 'pointer', transition: 'box-shadow 0.15s ease-in-out' }}>
+                          <div className="row g-0">
+                            {/* Season Image or Placeholder */}
+                            <div className="col-auto">
+                              {season.image && season.image.medium ? (
+                                <img
+                                  src={season.image.medium}
+                                  alt={`Season ${season.number}`}
+                                  className="img-fluid rounded-start"
+                                  style={{ width: '120px', height: '180px', objectFit: 'cover' }}
+                                />
+                              ) : show.image && show.image.medium ? (
+                                <img
+                                  src={show.image.medium}
+                                  alt={`Season ${season.number}`}
+                                  className="img-fluid rounded-start"
+                                  style={{ width: '120px', height: '180px', objectFit: 'cover' }}
+                                />
+                              ) : (
+                                <div
+                                  className="bg-light d-flex align-items-center justify-content-center rounded-start"
+                                  style={{ width: '120px', height: '180px' }}
+                                >
+                                  <i className="bi bi-tv text-muted" style={{ fontSize: '2rem' }}></i>
+                                </div>
+                              )}
+                            </div>
 
-                          {/* Season Content */}
-                          <div className="col">
-                            <div className="card-body p-3" style={{ maxHeight: '180px', overflow: 'hidden' }}>
-                              <div className="flex-grow-1">
-                                <h6 className="card-title mb-2 pb-2" style={{ borderBottom: '1px solid #dee2e6' }}>
-                                  Season {season.number}
-                                  {season.name && season.name !== `Season ${season.number}` && (
-                                    <small className="text-muted ms-2">- {season.name}</small>
+                            {/* Season Content */}
+                            <div className="col">
+                              <div className="card-body p-3" style={{ maxHeight: '180px', overflow: 'hidden' }}>
+                                <div className="flex-grow-1">
+                                  <h6 className="card-title mb-2 pb-2" style={{ borderBottom: '1px solid #dee2e6' }}>
+                                    Season {season.number}
+                                    {season.name && season.name !== `Season ${season.number}` && (
+                                      <small className="text-muted ms-2">- {season.name}</small>
+                                    )}
+                                  </h6>
+
+                                  {season.episodeOrder && (
+                                    <div className="small text-muted mb-1">
+                                      Episodes: {season.episodeOrder}
+                                    </div>
                                   )}
-                                </h6>
+                                  {(season.premiereDate || season.endDate) && (
+                                    <div className="small text-muted mb-2 mt-2">
+                                      📅 {season.premiereDate && formatDateNoEmoji(season.premiereDate)}
+                                      {season.premiereDate && season.endDate && ' - '}
+                                      {season.endDate && formatDateNoEmoji(season.endDate)}
+                                    </div>
+                                  )}
 
-                                {season.episodeOrder && (
-                                  <div className="small text-muted mb-1">
-                                    Episodes: {season.episodeOrder}
-                                  </div>
-                                )}
-                                {(season.premiereDate || season.endDate) && (
-                                  <div className="small text-muted mb-2 mt-2">
-                                    📅 {season.premiereDate && formatDateNoEmoji(season.premiereDate)}
-                                    {season.premiereDate && season.endDate && ' - '}
-                                    {season.endDate && formatDateNoEmoji(season.endDate)}
-                                  </div>
-                                )}
+                                  {season.network && season.network.name && (
+                                    <div className="small text-muted mb-1">
+                                      📺 {season.network.name}
+                                    </div>
+                                  )}
+                                  {season.webChannel && season.webChannel.name && (
+                                    <div className="small text-muted mb-1">
+                                      💻 {season.webChannel.name}
+                                    </div>
+                                  )}
 
-                                {season.network && season.network.name && (
-                                  <div className="small text-muted mb-1">
-                                    📺 {season.network.name}
-                                  </div>
-                                )}
-                                {season.webChannel && season.webChannel.name && (
-                                  <div className="small text-muted mb-1">
-                                    💻 {season.webChannel.name}
-                                  </div>
-                                )}
-
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            )}
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
