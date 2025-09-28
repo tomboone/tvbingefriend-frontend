@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { getApiUrl } from '../utils/api';
 
 const EpisodeDetail = () => {
   const { showId, seasonNumber, episodeNumber } = useParams();
@@ -16,7 +17,7 @@ const EpisodeDetail = () => {
         setLoading(true);
 
         // Fetch episodes for the season to find the specific episode
-        const episodesResponse = await fetch(`/api/episodes/${showId}/${seasonNumber}/episodes`);
+        const episodesResponse = await fetch(getApiUrl(`/api/episodes/${showId}/${seasonNumber}/episodes`));
         if (!episodesResponse.ok) {
           throw new Error('Episodes not found');
         }
@@ -30,14 +31,14 @@ const EpisodeDetail = () => {
         setAllEpisodes(episodes);
 
         // Fetch show details for context
-        const showResponse = await fetch(`/api/shows/${showId}`);
+        const showResponse = await fetch(getApiUrl(`/api/shows/${showId}`));
         if (showResponse.ok) {
           const showData = await showResponse.json();
           setShow(showData);
         }
 
         // Fetch all seasons for cross-season navigation
-        const seasonsResponse = await fetch(`/api/seasons/${showId}/seasons`);
+        const seasonsResponse = await fetch(getApiUrl(`/api/seasons/${showId}/seasons`));
         if (seasonsResponse.ok) {
           const seasonsData = await seasonsResponse.json();
           setAllSeasons(seasonsData);

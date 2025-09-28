@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { getApiUrl } from '../utils/api';
 
 const SearchShows = () => {
   const [query, setQuery] = useState('');
@@ -23,7 +24,7 @@ const SearchShows = () => {
         setHasSearched(true);
 
         const response = await fetch(
-          `/api/shows/search?q=${encodeURIComponent(searchQuery.trim())}&limit=20`
+          getApiUrl(`/api/shows/search?q=${encodeURIComponent(searchQuery.trim())}&limit=20`)
         );
 
         if (!response.ok) {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { getApiUrl } from '../utils/api'
 
 // Helper function to format dates
 const formatDate = (dateString) => {
@@ -33,7 +34,7 @@ function SeasonDetail() {
       setEpisodesLoading(true)
       setEpisodesError(null)
 
-      const episodesResponse = await fetch(`/api/episodes/${showId}/${season.number}/episodes`)
+      const episodesResponse = await fetch(getApiUrl(`/api/episodes/${showId}/${season.number}/episodes`))
       if (!episodesResponse.ok) {
         if (episodesResponse.status === 404) {
           // No episodes found is not an error, just empty array
@@ -60,7 +61,7 @@ function SeasonDetail() {
         setError(null)
 
         // Fetch the specific season directly using efficient endpoint
-        const seasonResponse = await fetch(`/api/seasons/${showId}/${seasonNumber}`)
+        const seasonResponse = await fetch(getApiUrl(`/api/seasons/${showId}/${seasonNumber}`))
         if (!seasonResponse.ok) {
           if (seasonResponse.status === 404) {
             throw new Error('Season not found')
@@ -71,14 +72,14 @@ function SeasonDetail() {
         setSeason(seasonData)
 
         // Fetch show information for context
-        const showResponse = await fetch(`/api/shows/${showId}`)
+        const showResponse = await fetch(getApiUrl(`/api/shows/${showId}`))
         if (showResponse.ok) {
           const showData = await showResponse.json()
           setShow(showData)
         }
 
         // Fetch all seasons for navigation
-        const allSeasonsResponse = await fetch(`/api/seasons/${showId}/seasons`)
+        const allSeasonsResponse = await fetch(getApiUrl(`/api/seasons/${showId}/seasons`))
         if (allSeasonsResponse.ok) {
           const allSeasonsData = await allSeasonsResponse.json()
           setAllSeasons(allSeasonsData)
