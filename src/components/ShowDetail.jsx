@@ -1,6 +1,20 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 
+// Helper function to format dates
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return `📅 ${date.toLocaleDateString()}`
+}
+
+// Helper function to format dates without emoji
+const formatDateNoEmoji = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString()
+}
+
 function ShowDetail() {
   const { id } = useParams()
   const [show, setShow] = useState(null)
@@ -97,54 +111,62 @@ function ShowDetail() {
   return (
     <div className="row g-4">
       <div className="col-12">
-        <h1 className="display-5 fw-bold text-primary mb-4">{show.name}</h1>
+        <h1 className="display-5 fw-bold text-dark mb-2">
+          {show.name}
+          {show.premiered && (
+            <span className="text-muted"> ({new Date(show.premiered).getFullYear()})</span>
+          )}
+        </h1>
       </div>
 
-      <div className="col-md-4">
+      <div className="col-md-4 text-center">
         {show.image && show.image.medium && (
           <img
             src={show.image.medium}
             alt={show.name}
             className="img-fluid rounded shadow-sm w-100"
-            style={{maxWidth: '300px'}}
+            style={{maxWidth: '350px'}}
           />
         )}
       </div>
 
       <div className="col-md-8">
         <div className="card">
-          <div className="card-header">
-            <h5 className="card-title mb-0">Show Information</h5>
-          </div>
           <div className="card-body">
             <div className="row g-3">
-              <div className="col-sm-6">
-                <small className="text-muted">Type</small>
-                <p className="mb-0 fw-semibold">{show.type}</p>
-              </div>
+              {show.rating && show.rating.average && (
+                <div className="col-12 mb-2">
+                  <span className="badge bg-warning text-dark fs-5 px-3 py-2">
+                    ⭐ {show.rating.average}/10
+                  </span>
+                </div>
+              )}
 
-              {show.language && (
+              {show.premiered && (
                 <div className="col-sm-6">
-                  <small className="text-muted">Language</small>
-                  <p className="mb-0 fw-semibold">{show.language}</p>
+                  <p className="mb-0"><small className="text-muted me-2">Premiered:</small><span className="fw-semibold">{formatDateNoEmoji(show.premiered)}</span></p>
+                </div>
+              )}
+
+              {show.ended && (
+                <div className="col-sm-6">
+                  <p className="mb-0"><small className="text-muted me-2">Ended:</small><span className="fw-semibold">{formatDateNoEmoji(show.ended)}</span></p>
                 </div>
               )}
 
               {show.genres && show.genres.length > 0 && (
                 <div className="col-12">
-                  <small className="text-muted">Genres</small>
-                  <div className="mt-1">
+                  <p className="mb-0"><small className="text-muted me-2">Genres:</small>
                     {show.genres.map((genre, index) => (
                       <span key={index} className="badge bg-secondary me-1">{genre}</span>
                     ))}
-                  </div>
+                  </p>
                 </div>
               )}
 
               {show.status && (
                 <div className="col-sm-6">
-                  <small className="text-muted">Status</small>
-                  <p className="mb-0 fw-semibold">
+                  <p className="mb-0"><small className="text-muted me-2">Status:</small>
                     <span className={`badge ${show.status === 'Running' ? 'bg-success' : 'bg-secondary'}`}>
                       {show.status}
                     </span>
@@ -152,49 +174,46 @@ function ShowDetail() {
                 </div>
               )}
 
-              {show.runtime && (
+              {(show.network?.name || show.webchannel?.name) && (
                 <div className="col-sm-6">
-                  <small className="text-muted">Runtime</small>
-                  <p className="mb-0 fw-semibold">{show.runtime} minutes</p>
-                </div>
-              )}
-
-              {show.premiered && (
-                <div className="col-sm-6">
-                  <small className="text-muted">Premiered</small>
-                  <p className="mb-0 fw-semibold">{show.premiered}</p>
-                </div>
-              )}
-
-              {show.ended && (
-                <div className="col-sm-6">
-                  <small className="text-muted">Ended</small>
-                  <p className="mb-0 fw-semibold">{show.ended}</p>
-                </div>
-              )}
-
-              {show.network && show.network.name && (
-                <div className="col-sm-6">
-                  <small className="text-muted">Network</small>
-                  <p className="mb-0 fw-semibold">{show.network.name}</p>
-                </div>
-              )}
-
-              {show.webchannel && show.webchannel.name && (
-                <div className="col-sm-6">
-                  <small className="text-muted">Web Channel</small>
-                  <p className="mb-0 fw-semibold">{show.webchannel.name}</p>
-                </div>
-              )}
-
-              {show.rating && show.rating.average && (
-                <div className="col-sm-6">
-                  <small className="text-muted">Rating</small>
-                  <p className="mb-0 fw-semibold">
-                    <span className="badge bg-warning text-dark">
-                      ⭐ {show.rating.average}/10
+                  <p className="mb-0">
+                    <small className="text-muted me-2">
+                      {show.network?.name ? '📺' : '💻'}
+                    </small>
+                    <span className="fw-semibold">
+                      {show.network?.name ?
+                        `${show.network.name}${show.network.country?.name ? ` (${show.network.country.name})` : ''}` :
+                        `${show.webchannel.name}${show.webchannel.country?.name ? ` (${show.webchannel.country.name})` : ''}`
+                      }
                     </span>
                   </p>
+                </div>
+              )}
+
+              {show.runtime && (
+                <div className="col-sm-6">
+                  <p className="mb-0"><small className="text-muted me-2">⏱️</small><span className="fw-semibold">{show.runtime} minutes</span></p>
+                </div>
+              )}
+
+              <div className="col-sm-6">
+                <p className="mb-0"><small className="text-muted me-2">Type:</small><span className="fw-semibold">{show.type}</span></p>
+              </div>
+
+              {show.language && (
+                <div className="col-sm-6">
+                  <p className="mb-0"><small className="text-muted me-2">Language:</small><span className="fw-semibold">{show.language}</span></p>
+                </div>
+              )}
+
+              {show.summary && (
+                <div className="col-12">
+                  <div className="mt-3 pt-3" style={{ borderTop: '1px solid #dee2e6' }}>
+                    <div
+                      className="show-summary-content"
+                      dangerouslySetInnerHTML={{ __html: show.summary }}
+                    />
+                  </div>
                 </div>
               )}
 
@@ -203,27 +222,12 @@ function ShowDetail() {
         </div>
       </div>
 
-      {show.summary && (
-        <div className="col-12">
-          <div className="card">
-            <div className="card-header">
-              <h5 className="card-title mb-0">Summary</h5>
-            </div>
-            <div className="card-body">
-              <div
-                className="show-summary-content"
-                dangerouslySetInnerHTML={{ __html: show.summary }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Seasons Section */}
       <div className="col-12">
         <div className="card">
           <div className="card-header">
-            <h5 className="card-title mb-0">Seasons</h5>
+            <h5 className="card-title mb-0">Seasons{seasons.length > 0 && ` (${seasons.length})`}</h5>
           </div>
           <div className="card-body">
             {seasonsLoading ? (
@@ -272,50 +276,39 @@ function ShowDetail() {
 
                           {/* Season Content */}
                           <div className="col">
-                            <div className="card-body p-3">
+                            <div className="card-body p-3" style={{ maxHeight: '180px', overflow: 'hidden' }}>
                               <div className="flex-grow-1">
-                                <h6 className="card-title mb-1">
+                                <h6 className="card-title mb-2 pb-2" style={{ borderBottom: '1px solid #dee2e6' }}>
                                   Season {season.number}
                                   {season.name && season.name !== `Season ${season.number}` && (
-                                    <small className="text-muted d-block">{season.name}</small>
+                                    <small className="text-muted ms-2">- {season.name}</small>
                                   )}
                                 </h6>
 
-                                <div className="small text-muted mb-2">
-                                  {season.episodeOrder && (
-                                    <span className="me-3">Episodes: {season.episodeOrder}</span>
-                                  )}
-                                  {season.premiereDate && (
-                                    <span className="me-3">Premiered: {season.premiereDate}</span>
-                                  )}
-                                  {season.endDate && (
-                                    <span className="me-3">Ended: {season.endDate}</span>
-                                  )}
-                                </div>
+                                {season.episodeOrder && (
+                                  <div className="small text-muted mb-1">
+                                    Episodes: {season.episodeOrder}
+                                  </div>
+                                )}
+                                {(season.premiereDate || season.endDate) && (
+                                  <div className="small text-muted mb-2 mt-2">
+                                    📅 {season.premiereDate && formatDateNoEmoji(season.premiereDate)}
+                                    {season.premiereDate && season.endDate && ' - '}
+                                    {season.endDate && formatDateNoEmoji(season.endDate)}
+                                  </div>
+                                )}
 
                                 {season.network && season.network.name && (
                                   <div className="small text-muted mb-1">
-                                    Network: {season.network.name}
+                                    📺 {season.network.name}
                                   </div>
                                 )}
                                 {season.webChannel && season.webChannel.name && (
                                   <div className="small text-muted mb-1">
-                                    Web Channel: {season.webChannel.name}
+                                    💻 {season.webChannel.name}
                                   </div>
                                 )}
 
-                                {season.summary && (
-                                  <div className="mt-2">
-                                    <div
-                                      className="small text-muted"
-                                      dangerouslySetInnerHTML={{
-                                        __html: season.summary.length > 200
-                                          ? season.summary.substring(0, 200) + '...'
-                                          : season.summary
-                                      }}
-                                    />
-                                  </div>
-                                )}
                               </div>
                             </div>
                           </div>

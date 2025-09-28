@@ -121,88 +121,43 @@ const SearchShows = () => {
 
               <div className="row g-3">
                 {results.map((show) => (
-                  <div key={show.id} className="col-12 col-md-6 col-lg-4">
-                    <div className="card h-100">
+                  <div key={show.id} className="col-12">
+                    <Link to={`/shows/${show.id}`} className="text-decoration-none">
+                      <div className="card h-100 border-hover" style={{ cursor: 'pointer' }}>
                       <div className="row g-0 h-100">
                         {/* Show Image */}
-                        <div className="col-4 col-sm-3">
+                        <div className="col-3 col-sm-2">
                           {show.image?.medium ? (
                             <img
                               src={show.image.medium}
                               alt={show.name}
                               className="img-fluid rounded-start h-100"
-                              style={{ objectFit: 'cover', minHeight: '120px' }}
+                              style={{ objectFit: 'cover', minHeight: '100px', maxHeight: '100px' }}
                             />
                           ) : (
                             <div
                               className="bg-light d-flex align-items-center justify-content-center rounded-start h-100"
-                              style={{ minHeight: '120px' }}
+                              style={{ minHeight: '100px', maxHeight: '100px' }}
                             >
-                              <i className="bi bi-tv text-muted" style={{ fontSize: '2rem' }}></i>
+                              <i className="bi bi-tv text-muted" style={{ fontSize: '1.75rem' }}></i>
                             </div>
                           )}
                         </div>
 
                         {/* Show Info */}
-                        <div className="col-8 col-sm-9">
-                          <div className="card-body p-3 d-flex flex-column h-100">
-                            <div className="flex-grow-1">
-                              <h5 className="card-title mb-1">
-                                <Link
-                                  to={`/shows/${show.id}`}
-                                  className="text-decoration-none text-dark"
-                                >
-                                  {show.name}
-                                </Link>
-                              </h5>
-
-                              <div className="text-muted small mb-2">
-                                {show.type && <span className="me-2">{show.type}</span>}
-                                {formatYear(show.premiered) && (
-                                  <span className="me-2">({formatYear(show.premiered)})</span>
-                                )}
-                                {show.status && (
-                                  <span className={`badge ${
-                                    show.status === 'Running' ? 'bg-success' :
-                                    show.status === 'Ended' ? 'bg-secondary' : 'bg-warning'
-                                  } ms-1`}>
-                                    {show.status}
-                                  </span>
-                                )}
-                              </div>
-
-                              {formatGenres(show.genres) && (
-                                <p className="card-text small text-muted mb-2">
-                                  <strong>Genres:</strong> {formatGenres(show.genres)}
-                                </p>
+                        <div className="col-9 col-sm-10 d-flex align-items-center">
+                          <div className="card-body py-3 ps-2 pe-3">
+                            <h5 className="card-title mb-0 text-dark">
+                              {show.name}
+                              {formatYear(show.premiered) && (
+                                <span className="text-muted small ms-2">({formatYear(show.premiered)})</span>
                               )}
-
-                              {show.summary && (
-                                <p className="card-text small">
-                                  {stripHTML(show.summary)}
-                                </p>
-                              )}
-                            </div>
-
-                            <div className="mt-auto">
-                              <div className="d-flex justify-content-between align-items-center">
-                                <Link
-                                  to={`/shows/${show.id}`}
-                                  className="btn btn-primary btn-sm"
-                                >
-                                  View Details
-                                </Link>
-                                {show.rating?.average && (
-                                  <small className="text-muted">
-                                    ⭐ {show.rating.average}/10
-                                  </small>
-                                )}
-                              </div>
-                            </div>
+                            </h5>
                           </div>
                         </div>
                       </div>
-                    </div>
+                      </div>
+                    </Link>
                   </div>
                 ))}
               </div>
