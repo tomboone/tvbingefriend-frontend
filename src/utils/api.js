@@ -6,20 +6,30 @@ export const getApiUrl = (endpoint) => {
     return endpoint;
   }
 
-  // In production, use environment variables for absolute URLs
-  if (endpoint.startsWith('/api/shows')) {
+  // In production, route to the appropriate service based on what data is being requested
+
+  // Show-related requests (search, show details)
+  if (endpoint.includes('/search') || endpoint.match(/^\/api\/shows\/\d+$/)) {
     const baseUrl = import.meta.env.VITE_SHOW_SERVICE_URL;
     return endpoint.replace('/api/shows', `${baseUrl}/api/shows`);
   }
 
-  if (endpoint.startsWith('/api/seasons')) {
+  // Season-related requests (season lists, season details)
+  if (endpoint.includes('/seasons')) {
     const baseUrl = import.meta.env.VITE_SEASON_SERVICE_URL;
-    return endpoint.replace('/api/seasons', `${baseUrl}/api/seasons`);
+    return `${baseUrl}${endpoint}`;
   }
 
-  if (endpoint.startsWith('/api/episodes')) {
+  // Episode-related requests
+  if (endpoint.includes('/episodes')) {
     const baseUrl = import.meta.env.VITE_EPISODE_SERVICE_URL;
-    return endpoint.replace('/api/episodes', `${baseUrl}/api/episodes`);
+    return `${baseUrl}${endpoint}`;
+  }
+
+  // Fallback to show service for any other /api/shows requests
+  if (endpoint.startsWith('/api/shows')) {
+    const baseUrl = import.meta.env.VITE_SHOW_SERVICE_URL;
+    return endpoint.replace('/api/shows', `${baseUrl}/api/shows`);
   }
 
   // Fallback to original endpoint
