@@ -1,11 +1,26 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 
+// Helper function to format dates
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return `📅 ${date.toLocaleDateString()}`
+}
+
+// Helper function to format dates without emoji
+const formatDateNoEmoji = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString()
+}
+
 function SeasonDetail() {
   const { showId, seasonNumber } = useParams()
   const [season, setSeason] = useState(null)
   const [show, setShow] = useState(null)
   const [episodes, setEpisodes] = useState([])
+  const [allSeasons, setAllSeasons] = useState([])
   const [loading, setLoading] = useState(true)
   const [episodesLoading, setEpisodesLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -62,6 +77,13 @@ function SeasonDetail() {
           setShow(showData)
         }
 
+        // Fetch all seasons for navigation
+        const allSeasonsResponse = await fetch(`/api/seasons/${showId}/seasons`)
+        if (allSeasonsResponse.ok) {
+          const allSeasonsData = await allSeasonsResponse.json()
+          setAllSeasons(allSeasonsData)
+        }
+
       } catch (err) {
         setError(err.message)
       } finally {
@@ -116,111 +138,125 @@ function SeasonDetail() {
 
   return (
     <div className="row g-4">
-      {/* Header with breadcrumb navigation */}
+      {/* Header with navigation */}
       <div className="col-12">
-        <nav aria-label="breadcrumb">
-          <ol className="breadcrumb">
-            <li className="breadcrumb-item">
-              <Link to="/" className="text-decoration-none">Home</Link>
-            </li>
-            {show && (
-              <li className="breadcrumb-item">
-                <Link to={`/shows/${showId}`} className="text-decoration-none">
-                  {show.name}
-                </Link>
-              </li>
-            )}
-            <li className="breadcrumb-item active" aria-current="page">
-              Season {season.number}
-            </li>
-          </ol>
-        </nav>
+        <div className="mb-3">
+          {show && (
+            <Link
+              to={`/shows/${showId}`}
+              className="btn btn-secondary"
+            >
+              ← Back to {show.name}
+            </Link>
+          )}
+        </div>
 
-        <div className="d-flex flex-column flex-md-row align-items-start gap-3 mb-4">
-          <div className="flex-grow-1">
-            <h1 className="display-6 fw-bold text-primary mb-2">
-              {show ? show.name : 'TV Show'} - Season {season.number}
-            </h1>
-            {season.name && season.name !== `Season ${season.number}` && (
-              <h2 className="h4 text-muted mb-0">{season.name}</h2>
-            )}
-          </div>
-          <Link
-            to={`/shows/${showId}`}
-            className="btn btn-outline-primary btn-sm"
-          >
-            ← Back to Show
-          </Link>
+        <div className="mb-4">
+          <h1 className="display-6 fw-bold text-dark mb-2">
+            {show ? show.name : 'TV Show'} - Season {season.number}
+          </h1>
+          {season.name && season.name !== `Season ${season.number}` && (
+            <h2 className="h4 text-muted mb-0">{season.name}</h2>
+          )}
         </div>
       </div>
 
-      {/* Season Image */}
-      {season.image && season.image.medium && (
-        <div className="col-md-4 col-lg-3">
+      {/* Season Image and Navigation */}
+      {season.image && season.image.medium ? (
+        <div className="col-md-4 col-lg-3 text-center">
           <img
             src={season.image.medium}
             alt={`Season ${season.number}`}
             className="img-fluid rounded shadow-sm w-100"
             style={{maxWidth: '300px'}}
           />
+
+          {/* Season Navigation */}
+          {allSeasons.length > 1 && (
+            <div className="mt-3 d-flex justify-content-center gap-2">
+              {allSeasons.find(s => s.number === season.number - 1) && (
+                <Link
+                  to={`/shows/${showId}/seasons/${season.number - 1}`}
+                  className="btn btn-outline-secondary btn-sm"
+                >
+                  ← Previous Season
+                </Link>
+              )}
+              {allSeasons.find(s => s.number === season.number + 1) && (
+                <Link
+                  to={`/shows/${showId}/seasons/${season.number + 1}`}
+                  className="btn btn-outline-secondary btn-sm"
+                >
+                  Next Season →
+                </Link>
+              )}
+            </div>
+          )}
         </div>
+      ) : (
+        /* Season Navigation when no image */
+        allSeasons.length > 1 && (
+          <div className="col-12 text-center mb-3">
+            <div className="d-flex justify-content-center gap-2">
+              {allSeasons.find(s => s.number === season.number - 1) && (
+                <Link
+                  to={`/shows/${showId}/seasons/${season.number - 1}`}
+                  className="btn btn-outline-secondary btn-sm"
+                >
+                  ← Previous Season
+                </Link>
+              )}
+              {allSeasons.find(s => s.number === season.number + 1) && (
+                <Link
+                  to={`/shows/${showId}/seasons/${season.number + 1}`}
+                  className="btn btn-outline-secondary btn-sm"
+                >
+                  Next Season →
+                </Link>
+              )}
+            </div>
+          </div>
+        )
       )}
 
       {/* Season Information */}
       <div className={season.image && season.image.medium ? "col-md-8 col-lg-9" : "col-12"}>
         <div className="card">
-          <div className="card-header">
-            <h5 className="card-title mb-0">Season Information</h5>
-          </div>
           <div className="card-body">
             <div className="row g-3">
-              <div className="col-sm-6">
-                <small className="text-muted">Season Number</small>
-                <p className="mb-0 fw-semibold fs-5">{season.number}</p>
-              </div>
-
-              {season.episodeOrder && (
-                <div className="col-sm-6">
-                  <small className="text-muted">Episodes</small>
-                  <p className="mb-0 fw-semibold fs-5">{season.episodeOrder}</p>
-                </div>
-              )}
 
               {season.premiereDate && (
                 <div className="col-sm-6">
-                  <small className="text-muted">Premiere Date</small>
-                  <p className="mb-0 fw-semibold">{season.premiereDate}</p>
+                  <p className="mb-0"><small className="text-muted me-2">Premiered:</small><span className="fw-semibold">{formatDateNoEmoji(season.premiereDate)}</span></p>
                 </div>
               )}
 
               {season.endDate && (
                 <div className="col-sm-6">
-                  <small className="text-muted">End Date</small>
-                  <p className="mb-0 fw-semibold">{season.endDate}</p>
+                  <p className="mb-0"><small className="text-muted me-2">Ended:</small><span className="fw-semibold">{formatDateNoEmoji(season.endDate)}</span></p>
                 </div>
               )}
 
               {season.network && season.network.name && (
                 <div className="col-sm-6">
-                  <small className="text-muted">Network</small>
-                  <p className="mb-0 fw-semibold">{season.network.name}</p>
-                  {season.network.country && (
-                    <small className="text-muted d-block">
-                      {season.network.country.name}
-                    </small>
-                  )}
+                  <p className="mb-0"><small className="text-muted me-2">📺</small><span className="fw-semibold">{season.network.name}{season.network.country?.name && ` (${season.network.country.name})`}</span></p>
                 </div>
               )}
 
               {season.webChannel && season.webChannel.name && (
                 <div className="col-sm-6">
-                  <small className="text-muted">Web Channel</small>
-                  <p className="mb-0 fw-semibold">{season.webChannel.name}</p>
-                  {season.webChannel.country && (
-                    <small className="text-muted d-block">
-                      {season.webChannel.country.name}
-                    </small>
-                  )}
+                  <p className="mb-0"><small className="text-muted me-2">💻</small><span className="fw-semibold">{season.webChannel.name}{season.webChannel.country?.name && ` (${season.webChannel.country.name})`}</span></p>
+                </div>
+              )}
+
+              {season.summary && (
+                <div className="col-12">
+                  <div className="mt-3 pt-3" style={{ borderTop: '1px solid #dee2e6' }}>
+                    <div
+                      className="season-summary-content"
+                      dangerouslySetInnerHTML={{ __html: season.summary }}
+                    />
+                  </div>
                 </div>
               )}
 
@@ -229,29 +265,13 @@ function SeasonDetail() {
         </div>
       </div>
 
-      {/* Season Summary */}
-      {season.summary && (
-        <div className="col-12">
-          <div className="card">
-            <div className="card-header">
-              <h5 className="card-title mb-0">Season Summary</h5>
-            </div>
-            <div className="card-body">
-              <div
-                className="season-summary-content"
-                dangerouslySetInnerHTML={{ __html: season.summary }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
 
       {/* Episodes Section */}
       <div className="col-12">
         <div className="card">
           <div className="card-header">
-            <h5 className="card-title mb-0">Episodes</h5>
+            <h5 className="card-title mb-0">Episodes{season.episodeOrder && ` (${season.episodeOrder})`}</h5>
           </div>
           <div className="card-body">
             {episodesLoading ? (
@@ -323,16 +343,6 @@ function SeasonDetail() {
                                   )}
                                 </div>
 
-                                {episode.summary && (
-                                  <div
-                                    className="small text-muted"
-                                    dangerouslySetInnerHTML={{
-                                      __html: episode.summary.length > 200
-                                        ? episode.summary.substring(0, 200) + '...'
-                                        : episode.summary
-                                    }}
-                                  />
-                                )}
                               </div>
                             </div>
                           </div>
