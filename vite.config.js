@@ -10,6 +10,10 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         // Episode service endpoints (most specific first)
+        '^/api/shows/\\d+/seasons/\\d+/episodes': {
+          target: env.VITE_EPISODE_SERVICE_URL || 'http://localhost:7073',
+          changeOrigin: true
+        },
         '^/api/episodes/\\d+/\\d+/episodes': {
           target: env.VITE_EPISODE_SERVICE_URL || 'http://localhost:7073',
           changeOrigin: true,
@@ -21,7 +25,15 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api\/episodes\/(\d+)$/, '/api/episodes/$1')
         },
-        // Season service endpoints
+        // Season service endpoints (most specific first)
+        '^/api/shows/\\d+/seasons/\\d+$': {
+          target: env.VITE_SEASON_SERVICE_URL || 'http://localhost:7072',
+          changeOrigin: true
+        },
+        '^/api/shows/\\d+/seasons$': {
+          target: env.VITE_SEASON_SERVICE_URL || 'http://localhost:7072',
+          changeOrigin: true
+        },
         '^/api/seasons/\\d+/\\d+$': {
           target: env.VITE_SEASON_SERVICE_URL || 'http://localhost:7072',
           changeOrigin: true,
