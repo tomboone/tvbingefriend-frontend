@@ -20,6 +20,18 @@ export const getApiUrl = (endpoint) => {
     return `${baseUrl}${endpoint}`;
   }
 
+  // Recommendation-related requests
+  if (endpoint.includes('/recommendations')) {
+    const baseUrl = import.meta.env.VITE_RECOMMENDATION_SERVICE_URL;
+    return `${baseUrl}${endpoint}`;
+  }
+
+  // Bulk show requests
+  if (endpoint.includes('/get_shows_bulk')) {
+    const baseUrl = import.meta.env.VITE_SHOW_SERVICE_URL;
+    return `${baseUrl}${endpoint}`;
+  }
+
   // Show-related requests (search, show details, or any remaining /api/shows)
   if (endpoint.startsWith('/api/shows')) {
     const baseUrl = import.meta.env.VITE_SHOW_SERVICE_URL;

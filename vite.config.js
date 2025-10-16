@@ -45,6 +45,16 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api\/seasons\/(\d+)\/seasons$/, '/api/shows/$1/seasons')
         },
+        // Bulk show endpoint
+        '/api/get_shows_bulk': {
+          target: env.VITE_SHOW_SERVICE_URL || 'http://localhost:7071',
+          changeOrigin: true
+        },
+        // Recommendation service endpoints
+        '^/api/shows/\\d+/recommendations': {
+          target: env.VITE_RECOMMENDATION_SERVICE_URL || 'http://localhost:7074',
+          changeOrigin: true
+        },
         // Show service endpoints
         '/api/shows': {
           target: env.VITE_SHOW_SERVICE_URL || 'http://localhost:7071',
