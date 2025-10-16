@@ -53,6 +53,13 @@ const EpisodeDetail = () => {
     fetchData();
   }, [episodeNumber, showId, seasonNumber]);
 
+  // Update page title
+  useEffect(() => {
+    if (show && episode) {
+      document.title = `${show.name} - S${seasonNumber}E${episode.number}: ${episode.name || 'Episode ' + episode.number} - TV Binge Friend`;
+    }
+  }, [show, episode, seasonNumber]);
+
   // Helper functions for cross-season navigation
   const getPreviousEpisodeUrl = () => {
     const currentEpisodeNum = episode.number;

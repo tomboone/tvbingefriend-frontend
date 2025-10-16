@@ -145,6 +145,13 @@ function ShowDetail() {
     }
   }, [id])
 
+  // Update page title when show data changes
+  useEffect(() => {
+    if (show) {
+      document.title = `${show.name} - TV Binge Friend`;
+    }
+  }, [show])
+
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{minHeight: '50vh'}}>

@@ -48,6 +48,15 @@ const SearchShows = () => {
     debouncedSearch(query);
   }, [query, debouncedSearch]);
 
+  // Update page title
+  useEffect(() => {
+    if (query.trim()) {
+      document.title = `Search: ${query} - TV Binge Friend`;
+    } else {
+      document.title = 'Search TV Shows - TV Binge Friend';
+    }
+  }, [query]);
+
   const handleInputChange = (e) => {
     setQuery(e.target.value);
   };

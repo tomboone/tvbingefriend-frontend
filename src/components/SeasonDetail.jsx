@@ -104,6 +104,13 @@ function SeasonDetail() {
     }
   }, [season, showId])
 
+  // Update page title
+  useEffect(() => {
+    if (show && season) {
+      document.title = `${show.name} - Season ${season.number} - TV Binge Friend`;
+    }
+  }, [show, season])
+
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{minHeight: '50vh'}}>
