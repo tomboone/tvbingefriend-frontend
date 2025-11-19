@@ -107,7 +107,7 @@ function SeasonDetail() {
   // Update page title
   useEffect(() => {
     if (show && season) {
-      document.title = `${show.name} - Season ${season.number} - TV Binge Friend`;
+      document.title = `${show.name} - Season ${season.number} - TV BingeFriend`;
     }
   }, [show, season])
 

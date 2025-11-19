@@ -148,7 +148,7 @@ function ShowDetail() {
   // Update page title when show data changes
   useEffect(() => {
     if (show) {
-      document.title = `${show.name} - TV Binge Friend`;
+      document.title = `${show.name} - TV BingeFriend`;
     }
   }, [show])
 

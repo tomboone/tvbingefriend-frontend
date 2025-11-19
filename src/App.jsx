@@ -1,27 +1,65 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
 import ShowDetail from './components/ShowDetail'
 import SeasonDetail from './components/SeasonDetail'
 import EpisodeDetail from './components/EpisodeDetail'
 import SearchShows from './components/SearchShows'
+import Login from './components/Login'
+import Register from './components/Register'
+import Profile from './components/Profile'
+import ProtectedRoute from './components/ProtectedRoute'
+import VerifyEmail from './components/VerifyEmail'
+import ForgotPassword from './components/ForgotPassword'
+import ResetPassword from './components/ResetPassword'
+import logo from './assets/tvbf-white.svg'
 import './App.css'
+
+function Navbar() {
+  const { user, logout, isAuthenticated } = useAuth();
+
+  return (
+    <nav className="navbar navbar-dark bg-primary py-3" style={{ width: '100%' }}>
+      <div className="container-fluid" style={{ maxWidth: '1320px', margin: '0 auto', width: '100%' }}>
+        <Link to="/" className="navbar-brand mb-0 text-decoration-none d-flex align-items-center gap-2">
+          <img src={logo} alt="TV BingeFriend" style={{ height: '50px' }} />
+          <span className="fs-1" style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600 }}>TV BingeFriend</span>
+        </Link>
+        <div className="d-flex gap-2 align-items-center">
+          <Link to="/search" className="btn btn-outline-light">
+            Search Shows
+          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link to="/profile" className="btn btn-outline-light">
+                {user?.username || 'Profile'}
+              </Link>
+              <button onClick={logout} className="btn btn-outline-light">
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="btn btn-outline-light">
+                Login
+              </Link>
+              <Link to="/register" className="btn btn-light">
+                Sign Up
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+}
 
 function App() {
   return (
     <Router>
-      <div className="d-flex flex-column" style={{ minHeight: '100vh', width: '100%' }}>
-        {/* Full-width header with centered content */}
-        <nav className="navbar navbar-dark bg-primary py-3" style={{ width: '100%' }}>
-          <div className="container-fluid" style={{ maxWidth: '1320px', margin: '0 auto', width: '100%' }}>
-            <Link to="/" className="navbar-brand fs-2 mb-0 text-decoration-none">
-              📺 TV Binge Friend
-            </Link>
-            <div className="d-flex">
-              <Link to="/search" className="btn btn-outline-light">
-                🔍 Search Shows
-              </Link>
-            </div>
-          </div>
-        </nav>
+      <AuthProvider>
+        <div className="d-flex flex-column" style={{ minHeight: '100vh', width: '100%' }}>
+          {/* Full-width header with centered content */}
+          <Navbar />
 
         {/* Full-width main content area with centered content */}
         <main className="bg-light py-4 flex-grow-1" style={{ width: '100%' }}>
@@ -31,10 +69,10 @@ function App() {
                 path="/"
                 element={
                   <div className="text-center py-5">
-                    <h2 className="mb-4">Welcome to TV Binge Friend</h2>
+                    <h2 className="mb-4">Welcome to TV BingeFriend</h2>
                     <p className="lead text-muted mb-4">Discover your next favorite TV show</p>
                     <Link to="/search" className="btn btn-primary btn-lg">
-                      🔍 Start Searching
+                      Start Searching
                     </Link>
                   </div>
                 }
@@ -43,6 +81,21 @@ function App() {
               <Route path="/shows/:id" element={<ShowDetail />} />
               <Route path="/shows/:showId/seasons/:seasonNumber" element={<SeasonDetail />} />
               <Route path="/shows/:showId/seasons/:seasonNumber/episodes/:episodeNumber" element={<EpisodeDetail />} />
+
+              {/* Auth routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </div>
         </main>
@@ -73,6 +126,7 @@ function App() {
           </div>
         </footer>
       </div>
+      </AuthProvider>
     </Router>
   )
 }
