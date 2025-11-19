@@ -26,8 +26,8 @@ function Profile() {
 
   useEffect(() => {
     if (user) {
-      setNewUsername(user.username);
-      setNewEmail(user.email);
+      setNewUsername(user.username || '');
+      setNewEmail(user.email || '');
     }
   }, [user]);
 
@@ -110,6 +110,33 @@ function Profile() {
     }
   };
 
+  const handleResendVerification = async () => {
+    console.log('User object:', user);
+    console.log('User email:', user?.email);
+
+    if (!user?.email) {
+      setMessage({ type: 'danger', text: 'Email address not found' });
+      return;
+    }
+
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      console.log('Sending resend verification with email:', user.email);
+      await userApi.resendVerification(user.email);
+      setMessage({
+        type: 'success',
+        text: 'Verification email sent! Please check your inbox.',
+      });
+    } catch (err) {
+      console.error('Resend verification error:', err);
+      setMessage({ type: 'danger', text: err.message });
+    }
+
+    setLoading(false);
+  };
+
   if (!user) {
     return (
       <div className="alert alert-warning">
@@ -136,9 +163,6 @@ function Profile() {
           </div>
           <div className="card-body">
             <div className="mb-3">
-              <strong>User ID:</strong> {user.id}
-            </div>
-            <div className="mb-3">
               <strong>Username:</strong> {user.username}
             </div>
             <div className="mb-3">
@@ -146,7 +170,16 @@ function Profile() {
               {user.email_verified ? (
                 <span className="badge bg-success">Verified</span>
               ) : (
-                <span className="badge bg-warning">Not Verified</span>
+                <>
+                  <span className="badge bg-warning">Not Verified</span>
+                  <button
+                    className="btn btn-sm btn-outline-primary ms-2"
+                    onClick={handleResendVerification}
+                    disabled={loading}
+                  >
+                    Resend Verification Email
+                  </button>
+                </>
               )}
             </div>
             <div className="mb-0">
