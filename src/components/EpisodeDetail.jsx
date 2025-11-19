@@ -56,7 +56,7 @@ const EpisodeDetail = () => {
   // Update page title
   useEffect(() => {
     if (show && episode) {
-      document.title = `${show.name} - S${seasonNumber}E${episode.number}: ${episode.name || 'Episode ' + episode.number} - TV Binge Friend`;
+      document.title = `${show.name} - S${seasonNumber}E${episode.number}: ${episode.name || 'Episode ' + episode.number} - TV BingeFriend`;
     }
   }, [show, episode, seasonNumber]);
 
