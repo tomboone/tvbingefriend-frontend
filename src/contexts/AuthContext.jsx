@@ -22,7 +22,8 @@ export const AuthProvider = ({ children }) => {
     const initializeAuth = async () => {
       if (tokenStorage.hasTokens()) {
         try {
-          const userData = await userApi.verify();
+          // Use profile endpoint to get full user data including email
+          const userData = await userApi.getProfile();
           setUser(userData);
         } catch (err) {
           // Token is invalid, clear it
@@ -40,7 +41,8 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       await userApi.login(username, password);
-      const userData = await userApi.verify();
+      // Use profile endpoint to get full user data
+      const userData = await userApi.getProfile();
       setUser(userData);
       return { success: true };
     } catch (err) {
@@ -67,7 +69,8 @@ export const AuthProvider = ({ children }) => {
 
   const refreshUser = async () => {
     try {
-      const userData = await userApi.verify();
+      // Use profile endpoint to get full user data
+      const userData = await userApi.getProfile();
       setUser(userData);
     } catch (err) {
       console.error('Failed to refresh user data:', err);

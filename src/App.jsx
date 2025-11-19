@@ -25,9 +25,6 @@ function Navbar() {
           <span className="fs-1" style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600 }}>TV BingeFriend</span>
         </Link>
         <div className="d-flex gap-2 align-items-center">
-          <Link to="/search" className="btn btn-outline-light">
-            Search Shows
-          </Link>
           {isAuthenticated ? (
             <>
               <Link to="/profile" className="btn btn-outline-light">
@@ -65,29 +62,54 @@ function App() {
         <main className="bg-light py-4 flex-grow-1" style={{ width: '100%' }}>
           <div className="container-fluid" style={{ maxWidth: '1320px', margin: '0 auto', width: '100%' }}>
             <Routes>
-              <Route
-                path="/"
-                element={
-                  <div className="text-center py-5">
-                    <h2 className="mb-4">Welcome to TV BingeFriend</h2>
-                    <p className="lead text-muted mb-4">Discover your next favorite TV show</p>
-                    <Link to="/search" className="btn btn-primary btn-lg">
-                      Start Searching
-                    </Link>
-                  </div>
-                }
-              />
-              <Route path="/search" element={<SearchShows />} />
-              <Route path="/shows/:id" element={<ShowDetail />} />
-              <Route path="/shows/:showId/seasons/:seasonNumber" element={<SeasonDetail />} />
-              <Route path="/shows/:showId/seasons/:seasonNumber/episodes/:episodeNumber" element={<EpisodeDetail />} />
-
-              {/* Auth routes */}
+              {/* Public auth routes */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/verify-email" element={<VerifyEmail />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+
+              {/* Protected routes - all require authentication */}
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <SearchShows />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/search"
+                element={
+                  <ProtectedRoute>
+                    <SearchShows />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/shows/:id"
+                element={
+                  <ProtectedRoute>
+                    <ShowDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/shows/:showId/seasons/:seasonNumber"
+                element={
+                  <ProtectedRoute>
+                    <SeasonDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/shows/:showId/seasons/:seasonNumber/episodes/:episodeNumber"
+                element={
+                  <ProtectedRoute>
+                    <EpisodeDetail />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/profile"
                 element={
